@@ -13,13 +13,19 @@ Using Digispark (ATTiny85) with Panasonic TV remote as USB Keyboard
 Using Panasonic TV as PC monitor for watching Movies/Netflix/Youtube is nice. But what's not nice is needing to walk to PC from the couch to pause the video, and then rewind cause you walked to pause and missed the action. Luckily the TV remote has some extra buttons that could be used to remotely control the PC (At least mine has).
 
 ![Panasonic TV Remote](https://github.com/SeaCrow/Digispark_Panasonic_TV_IR_Adapter/raw/main/Img/PanasonicTV_Remote.png)
+
 Said remote.
 
+
 ![Digispar with IR](https://github.com/SeaCrow/Digispark_Panasonic_TV_IR_Adapter/raw/main/Img/Digispark_IR.png)
+
 Digispark with IR Reciver
 
+
 ![Button mapping](https://github.com/SeaCrow/Digispark_Panasonic_TV_IR_Adapter/raw/main/Img/Remote_button_names.png)
+
 Buttons used for remote keyboard.
+
 
 ### Preparing Arduino IDE for Digispark
 * Add DigiStump to Board Manager: `http://digistump.com/package_digistump_index.json` and install them.
