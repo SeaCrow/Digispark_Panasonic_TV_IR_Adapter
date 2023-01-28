@@ -2,16 +2,26 @@
  * USB IR Keyboard/Reciver for Panasonic Remote
  * based on Digispark(ATTiny85)
  *
- * Panasonic TV remote signal was found to be consisting of (as seen by reciver):
+ * Panasonic TV remote signal was found to be consisting of (as seen by ATTiny85 from IR Reciver signal state):
  * Low state(~3,575ms),High state(~1,648ms) header, followed by binary code of 49 bytes.
  * Logical 0 - High State for ~355us,
  * Logical 1 - High State for ~1215us,
  * separated by low state breaks of ~520us.
  *
+ *	Default H  | Header LOW HIGH |  0    1      1     0   0    1   etc.
+ * . . . ______             _____   _   ____   ____   _   _   ____ . . .
+ *             |___________|     |_| |_|    |_|    |_| |_| |_|    
+ *
+ * By poking for IR LOW state we can detect start of transmission, then by checking the state every RESOLUTION uSeconds,
+ * we can count how many times we encountered HIGH state before LOW state. Having that count, lets us recognize if it was
+ * Logical 0, Logical 1, Header HIGH or Default HIGH betwen transmissions.
+ *
  * 24-10-2018 File Created
  * 27-10-2018 Delay added, poking for transmision every 3ms is enough to catch every transmission start
  * 28-11-2019 Added Definitions for TAB, F4 and changed functions of IR_UP,IR_DOWN old values left commented
  * 27-01-2023 Added Definitions for ENTER, LEFT, RIGHT and added functions to IR_STOP, IR_PAUSE
+ * 28-01-2023 Expanded summary.
+ *
  */
 #include "DigiKeyboard.h"
 
@@ -19,9 +29,9 @@
 #define IRpin 2			// Signal pin of IR Reciver
 
 
-#define MAXPULSE		91	// the maximum time we'll listen for in milliseconds (header + 49 logical 1's), serves as timeout.
-#define NUMPULSES		49  // max IR pulse pairs to sample
-#define RESOLUTION		128 // time between IR measurements in uSeconds
+#define MAXPULSE		91		// the maximum time we'll listen for in milliseconds (header + 49 logical 1's), serves as timeout.
+#define NUMPULSES		49		// max IR pulse pairs to sample
+#define RESOLUTION		128		// time between IR measurements in uSeconds
 
 uint64_t irCode = 0;
 
@@ -31,7 +41,7 @@ uint64_t irCode = 0;
 #define IR_UP		0xD006C25
 
 #define IR_REW		0xD00D2A3
-#define IR_PLAY		0x0D009061
+#define IR_PLAY		0xD009061
 #define IR_FORW		0xD009263
 
 #define IR_STOP		0xD004011
@@ -39,18 +49,18 @@ uint64_t irCode = 0;
 #define IR_REC		0xD005021
 
 //USB HID CODES
-#define KEY_SPACE		44	// youtube/netflix/plex pause/play
-#define KEY_J			13	// 10 sec backward in youtube
-#define KEY_L			15	// 10 sec forward in youtube
-#define KEY_F			9	// full screen in youtube/netflix/plex
-#define KEY_UP_ARROW	82
-#define KEY_DOWN_ARROW	81
-#define KEY_ESC			41
-#define KEY_TAB			43
-#define KEY_F4			61
-#define KEY_ENTER		40
-#define KEY_LEFT_ARROW	80	// 10 sec backward in netflix/plex
-#define KEY_RIGHT_ARROW	79
+#define KEY_SPACE			44	// youtube/netflix/plex pause/play
+#define KEY_J				13	// 10 sec backward in youtube
+#define KEY_L				15	// 10 sec forward in youtube
+#define KEY_F				9	// full screen in youtube/netflix/plex
+#define KEY_UP_ARROW		82
+#define KEY_DOWN_ARROW		81
+#define KEY_ESC				41
+#define KEY_TAB				43
+#define KEY_F4				61
+#define KEY_ENTER			40
+#define KEY_LEFT_ARROW		80	// 10 sec backward in netflix/plex
+#define KEY_RIGHT_ARROW		79
 
 void setup()
 {
@@ -152,7 +162,7 @@ uint64_t listenForIR() {  // IR receive code
 
     if (! (IRpin_PIN & _BV(IRpin))) // low state - pulse break
     {
-      if (readingNr != 0) // do we just finished reading pulse?
+      if (readingNr != 0) // did we just finished reading pulse?
       {
         if (readingNr > 1 && readingNr < 5) // it was logical 0
         {
