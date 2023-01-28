@@ -15,8 +15,8 @@
  */
 #include "DigiKeyboard.h"
 
-#define IRpin_PIN PINB // ATTiny85 had Port B pins
-#define IRpin 2
+#define IRpin_PIN PINB	// ATTiny85 had Port B pins
+#define IRpin 2			// Signal pin of IR Reciver
 
 
 #define MAXPULSE		91	// the maximum time we'll listen for in milliseconds (header + 49 logical 1's), serves as timeout.
@@ -25,6 +25,7 @@
 
 uint64_t irCode = 0;
 
+//Remote button codes
 #define IR_POWER	0xD00FCB5
 #define IR_DOWN		0xD00ECA5
 #define IR_UP		0xD006C25
