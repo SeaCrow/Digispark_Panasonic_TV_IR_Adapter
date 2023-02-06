@@ -21,7 +21,8 @@
  * 28-11-2019 Added Definitions for TAB, F4 and changed functions of IR_UP,IR_DOWN old values left commented
  * 27-01-2023 Added Definitions for ENTER, LEFT, RIGHT and added functions to IR_STOP, IR_PAUSE
  * 28-01-2023 Expanded summary.
- *
+ * 29-01-2023 Added remote D-pad. Definitions and functions for IR_DPAD_UP, IR_DPAD_DOWN, IR_DPAD_LEFT, IR_DPAD_RIGHT, IR_DPAD_OK.
+ *            Removed functions from IR_STOP, IR_PAUSE
  */
 #include "DigiKeyboard.h"
 
@@ -36,31 +37,37 @@
 uint64_t irCode = 0;
 
 //Remote button codes
-#define IR_POWER	0xD00FCB5
-#define IR_DOWN		0xD00ECA5
-#define IR_UP		0xD006C25
+#define IR_POWER	      0xD00FCB5
+#define IR_DOWN		      0xD00ECA5
+#define IR_UP		        0xD006C25
 
-#define IR_REW		0xD00D2A3
-#define IR_PLAY		0xD009061
-#define IR_FORW		0xD009263
+#define IR_REW		      0xD00D2A3
+#define IR_PLAY		      0xD009061
+#define IR_FORW		      0xD009263
 
-#define IR_STOP		0xD004011
-#define IR_PAUSE	0xD00A071
-#define IR_REC		0xD005021
+#define IR_STOP		      0xD004011
+#define IR_PAUSE	      0xD00A071
+#define IR_REC		      0xD005021
+
+#define IR_DPAD_UP      0x1009257
+#define IR_DPAD_DOWN    0x10112D7
+#define IR_DPAD_LEFT    0x100B277
+#define IR_DPAD_RIGHT   0x10132F7
+#define IR_DPAD_OK      0x100D297
 
 //USB HID CODES
-#define KEY_SPACE			44	// youtube/netflix/plex pause/play
-#define KEY_J				13	// 10 sec backward in youtube
-#define KEY_L				15	// 10 sec forward in youtube
-#define KEY_F				9	// full screen in youtube/netflix/plex
-#define KEY_UP_ARROW		82
-#define KEY_DOWN_ARROW		81
-#define KEY_ESC				41
-#define KEY_TAB				43
-#define KEY_F4				61
-#define KEY_ENTER			40
+#define KEY_SPACE			    44	// youtube/netflix/plex pause/play
+#define KEY_J				      13	// 10 sec backward in youtube
+#define KEY_L				      15	// 10 sec forward in youtube
+#define KEY_F             9	// full screen in youtube/netflix/plex
+#define KEY_UP_ARROW      82
+#define KEY_DOWN_ARROW    81
+#define KEY_ESC           41
+#define KEY_TAB           43
+#define KEY_F4            61
+#define KEY_ENTER         40
 #define KEY_LEFT_ARROW		80	// 10 sec backward in netflix/plex
-#define KEY_RIGHT_ARROW		79
+#define KEY_RIGHT_ARROW		79  // 10 sec forward in netflix/plex
 
 void setup()
 {
@@ -115,18 +122,31 @@ void loop()
         //DigiKeyboard.sendKeyStroke(KEY_DOWN_ARROW);
         DigiKeyboard.sendKeyPress(0,0); // release all keys
         break;
-       case IR_UP:
+      case IR_UP:
         //DigiKeyboard.sendKeyStroke(KEY_UP_ARROW);
         DigiKeyboard.sendKeyPress(KEY_TAB,MOD_ALT_LEFT); // press ALT + TAB
         DigiKeyboard.delay(100);
         DigiKeyboard.sendKeyPress(0,MOD_ALT_LEFT); // release TAB but keep ALT pressed
         break;
-       case IR_STOP:
-		DigiKeyboard.sendKeyStroke(KEY_ENTER);
-		break;
-       case IR_PAUSE:
-		DigiKeyboard.sendKeyStroke(KEY_LEFT_ARROW);
-		break;
+      case IR_STOP:
+        break;
+      case IR_PAUSE:
+        break;
+      case IR_DPAD_UP:
+        DigiKeyboard.sendKeyStroke(KEY_UP_ARROW);
+        break;
+      case IR_DPAD_DOWN:
+        DigiKeyboard.sendKeyStroke(KEY_DOWN_ARROW);
+        break;
+      case IR_DPAD_LEFT:
+        DigiKeyboard.sendKeyStroke(KEY_LEFT_ARROW);
+        break;
+      case IR_DPAD_RIGHT:
+        DigiKeyboard.sendKeyStroke(KEY_RIGHT_ARROW);
+        break;
+      case IR_DPAD_OK:
+        DigiKeyboard.sendKeyStroke(KEY_ENTER);
+        break;
     }
     DigiKeyboard.delay(100);
     irCode = 0;
